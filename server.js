@@ -365,6 +365,11 @@ async function startServer() {
 
     app.use("/aisearch", express.static(path.join(__dirname, "public")));
     app.use("/", express.static(path.join(__dirname, "public")));
+    
+    app.get("/", (req, res) => {
+      res.sendFile(path.join(__dirname, "index.html"));
+    });
+
 
     if (ENABLE_LOGGING) {
       logger.debug("Static file paths:", {
@@ -1179,7 +1184,7 @@ async function startServer() {
       });
     });
 
-    app.use("/", addonRouter);
+    //app.use("/", addonRouter);
     app.use(BASE_PATH, addonRouter);
 
     addonRouter.post("/encrypt", express.json(), (req, res) => {
