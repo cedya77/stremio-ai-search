@@ -1182,7 +1182,7 @@ async function startServer() {
     app.use("/", addonRouter);
     app.use(BASE_PATH, addonRouter);
 
-    app.post("/encrypt", express.json(), (req, res) => {
+    addonRouter.post("/encrypt", express.json(), (req, res) => {
       try {
         const configData = req.body;
         if (!configData) {
@@ -1213,7 +1213,7 @@ async function startServer() {
       }
     });
 
-    app.post("/decrypt", express.json(), (req, res) => {
+    addonRouter.post("/decrypt", express.json(), (req, res) => {
       try {
         const { encryptedConfig } = req.body;
         if (!encryptedConfig) {

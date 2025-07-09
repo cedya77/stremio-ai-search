@@ -100,31 +100,38 @@ function logEmptyCatalog(query, data = {}) {
   );
 }
 
-// Simplified logger without console logs, only file logging
 const logger = {
   debug: function (message, data) {
     if (ENABLE_LOGGING) {
       writeLog("DEBUG", message, data);
+      console.debug(`[DEBUG] ${message}`, data || "");
     }
   },
   info: function (message, data) {
     if (ENABLE_LOGGING) {
       writeLog("INFO", message, data);
+      console.info(`[INFO] ${message}`, data || "");
     }
   },
   warn: function (message, data) {
     if (ENABLE_LOGGING) {
       writeLog("WARN", message, data);
+      console.warn(`[WARN] ${message}`, data || "");
     }
   },
   error: function (message, data) {
     if (ENABLE_LOGGING) {
       writeLog("ERROR", message, data);
+      console.error(`[ERROR] ${message}`, data || "");
     }
   },
-  query: logQuery, // Add the query logger to the logger object
+  query: function (query) {
+    logQuery(query);
+    // Also print queries to console always (optional)
+    console.log(`[QUERY] ${query}`);
+  },
   emptyCatalog: function (reason, data = {}) {
-    // Skip logging for specific errors we want to ignore
+    // same as your original but add console.error
     const skipPatterns = [
       "Invalid IV length",
       "punycode",
@@ -140,29 +147,23 @@ const logger = {
       "No search query provided",
     ];
 
-    // Check if any of the skip patterns match the reason or data.error
     const shouldSkip = skipPatterns.some(
       (pattern) =>
         reason.includes(pattern) || (data.error && data.error.includes(pattern))
     );
 
-    if (shouldSkip) {
-      return;
-    }
+    if (shouldSkip) return;
 
-    // Always log empty catalogs regardless of ENABLE_LOGGING
     const timestamp = new Date().toISOString();
     const formattedData = JSON.stringify(data, null, 2);
     const logMessage = `[${timestamp}] EMPTY_CATALOG: ${reason}\n${formattedData}\n`;
 
-    // Write to error log file
-    fs.appendFile(
-      path.join(logsDir, "error.log"),
-      logMessage,
-      () => {} // Silent error handling
-    );
+    fs.appendFile(path.join(logsDir, "error.log"), logMessage, () => {});
+
+    console.error(`[EMPTY_CATALOG] ${reason}`, data);
   },
   ENABLE_LOGGING,
 };
+
 
 module.exports = logger;
