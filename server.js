@@ -259,7 +259,7 @@ if (ENABLE_LOGGING) {
   logger.info("Logging enabled via ENABLE_LOGGING environment variable");
 }
 
-const PORT = 7000;
+const PORT = process.env.PORT;
 const HOST = process.env.HOST
   ? `https://${process.env.HOST}`
   : "https://stremio.itcon.au";
